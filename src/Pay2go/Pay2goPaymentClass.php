@@ -181,9 +181,7 @@ class Pay2goPaymentClass {
      */
     public function mpg_unit_test() {
 	
-		die("inin");
-	
-		$result = array (
+/* 		$result = array (
 			"MerchantID"		=>	"3502275",					//	商店代號
 			"RespondType"		=>	"JSON",						//	回傳格式
 			"TimeStamp"			=>	time(),						//	時間戳記
@@ -195,7 +193,7 @@ class Pay2goPaymentClass {
 		);
 	
 		//	檢查碼
-		$result["CheckValue"]	=	$this->get_check_value($result, "ZrpKy4IX77doTzOE4fWfKV2leWWWDs8D", "UxnsC5qJdE86eXLi");
+		$result["CheckValue"]	=	$this->get_check_value($result, "ZrpKy4IX77doTzOE4fWfKV2leWWWDs8D", "UxnsC5qJdE86eXLi"); */
 			
 		return $this->create_form($result);
 	}	
