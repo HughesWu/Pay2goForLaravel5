@@ -55,6 +55,7 @@ class Pay2goPaymentClass {
      * @param array     $paymentMethod      付款方式; 預設為"否"; 資料格式為一維陣列 Key = Input 的 Name, Value = Input 的 Value
      * @param boolean   $isTest             是否為測試模式; 預設為"是"
      * @param boolean   $autoSubmit         是否自動送出; 預設為"否"; 當此參數為"是", 會自動清除 $submitButtonStyle
+     * @param int	 $autoSubmitBySec    幾秒後送出
      * @param string    $submitButtonStyle  送出按鈕格式; 預設為"空"
      */
     public function create_form ($paymentParams = NULL, $paymentMethod = NULL, $isTest = TRUE, $autoSubmit = FALSE, $autoSubmitBySec = 0, $submitButtonStyle = NULL) {
@@ -117,51 +118,51 @@ class Pay2goPaymentClass {
         $errArray = array ();
 
         if (!isset($paymentParams["MerchantID"]) || empty($paymentParams["MerchantID"])) {
-            $errArray[] = "商店代號 設定錯誤或是空白";
+            $errArray[] = "商店代號 (MerchantID) 設定錯誤或是空白";
         }
 
         if (!isset($paymentParams["RespondType"]) || !in_array($paymentParams["RespondType"], array("String", "JSON"))) {
-            $errArray[] = "回傳格式 設定錯誤或是空白";
+            $errArray[] = "回傳格式 (RespondType) 設定錯誤或是空白";
         }
 
         if (!isset($paymentParams["CheckValue"]) || empty($paymentParams["CheckValue"])) {
-            $errArray[] = "檢查碼 設定錯誤或是空白";
+            $errArray[] = "檢查碼 (CheckValue) 設定錯誤或是空白";
         }
 
         if (!isset($paymentParams["TimeStamp"]) || empty($paymentParams["TimeStamp"])) {
-            $errArray[] = "時間戳記 設定錯誤或是空白";
+            $errArray[] = "時間戳記 (TimeStamp) 設定錯誤或是空白";
         }
 
         if (!isset($paymentParams["Version"]) || !in_array($paymentParams["Version"], array("1.0", "1.1"))) {
-            $errArray[] = "串接版本 設定錯誤或是空白";
+            $errArray[] = "串接版本 (Version) 設定錯誤或是空白";
         }
 
         if (!isset($paymentParams["MerchantOrderNo"]) || empty($paymentParams["MerchantOrderNo"])) {
-            $errArray[] = "商店訂單編號 設定錯誤或是空白";
+            $errArray[] = "商店訂單編號 (MerchantOrderNo) 設定錯誤或是空白";
         } else if (strlen($paymentParams["MerchantOrderNo"]) > 20) {
-            $errArray[] = "商店訂單編號 長度不得超過 20 字元";
+            $errArray[] = "商店訂單編號 (MerchantOrderNo) 長度不得超過 20 字元";
         } else if (!preg_match("/^[a-zA-Z0-9_]+$/", $paymentParams["MerchantOrderNo"])) {
-            $errArray[] = "商店訂單編號 僅為英數字 + 底線格式";
+            $errArray[] = "商店訂單編號 (MerchantOrderNo) 僅為英數字 + 底線格式";
         }
 
         if (!isset($paymentParams["Amt"]) || empty($paymentParams["Amt"])) {
-            $errArray[] = "訂單金額  設定錯誤或是空白";
+            $errArray[] = "訂單金額 (Amt) 設定錯誤或是空白";
         } else if (strlen($paymentParams["Amt"]) > 10) {
-            $errArray[] = "訂單金額  長度不得超過 10 字元";
+            $errArray[] = "訂單金額 (Amt) 長度不得超過 10 字元";
         } else if (!preg_match("/^[0-9]+$/", $paymentParams["Amt"])) {
-            $errArray[] = "訂單金額  僅為數字格式";
+            $errArray[] = "訂單金額 (Amt) 僅為數字格式";
         }
 
         if (!isset($paymentParams["ItemDesc"]) || empty($paymentParams["ItemDesc"])) {
-            $errArray[] = "商品資訊  設定錯誤或是空白";
+            $errArray[] = "商品資訊 (ItemDesc) 設定錯誤或是空白";
         }
 
         if (!isset($paymentParams["LoginType"]) || (empty($paymentParams["LoginType"]) && $paymentParams["LoginType"] != 0)) {
-            $errArray[] = "是否要登入智付寶會員  設定錯誤或是空白";
+            $errArray[] = "是否要登入智付寶會員 (LoginType) 設定錯誤或是空白";
         }
 
         if (isset($paymentParams["Email"]) && empty($paymentParams["Email"]) && !preg_match("/[a-zA-Z0-9\._\+]+@([a-zA-Z0-9\.-]\.)*[a-zA-Z0-9\.-]+/", $paymentParams["Email"])) {
-            $errArray[] = "付款人電子信箱  設定錯誤";
+            $errArray[] = "付款人電子信箱 (Email) 設定錯誤";
         }
 
         return $errArray;
@@ -175,27 +176,33 @@ class Pay2goPaymentClass {
     public function form_url ($isTest = TRUE) {
         return ($isTest == TRUE) ? "https://capi.pay2go.com/MPG/mpg_gateway" : "https://api.pay2go.com/MPG/mpg_gateway";
     }
-	
+
     /**
      * MPG 測試程式
+     * 
+     * @param boolean   $autoSubmit         是否自動送出
+     * @return type
      */
-    public function mpg_unit_test() {
+    public function mpg_unit_test($autoSubmit = TRUE) {
 	
- 		$result = array (
-			"MerchantID"		=>	"3502275",					//	商店代號
-			"RespondType"		=>	"JSON",						//	回傳格式
-			"TimeStamp"			=>	time(),						//	時間戳記
-			"Version"			=>	"1.1",						//	串接版本
-			"MerchantOrderNo"	=>	date("Ymdhis", time()),		//	商店訂單編號
-			"Amt"				=>	rand(30 , 50),				//	訂單金額
-			"ItemDesc"			=>	"MPG Unit Test",			//	商品資訊
-			"LoginType"			=>	"0",						//	是否要登入智付寶會員
-		);
-	
-		//	檢查碼
-		$result["CheckValue"]	=	$this->get_check_value($result, "ZrpKy4IX77doTzOE4fWfKV2leWWWDs8D", "UxnsC5qJdE86eXLi");
-		
-		return $this->create_form($result, NULL, TRUE, TRUE);
-	}	
+        $result = array (
+            "MerchantID"        =>  "3502275",              //	商店代號
+            "RespondType"	=>  "JSON",                 //  回傳格式
+            "TimeStamp"		=>  time(),                 //	時間戳記
+            "Version"		=>  "1.1",                  //	串接版本
+            "MerchantOrderNo"	=>  date("Ymdhis", time()), //	商店訂單編號
+            "Amt"		=>  rand(30 , 50),          //	訂單金額
+            "ItemDesc"		=>  "MPG Unit Test",        //	商品資訊
+            "LoginType"		=>  "0",                    //	是否要登入智付寶會員
+        );
+
+        //  檢查碼
+        $result["CheckValue"]	=   $this->get_check_value($result, "ZrpKy4IX77doTzOE4fWfKV2leWWWDs8D", "UxnsC5qJdE86eXLi");       
+        
+        //  送出按鈕
+        $submitButtonStyle      =   "<input id='Pay2goMgr' name='submit' type='submit' value='送出' />";
+        
+        return $this->create_form($result, NULL, TRUE, $autoSubmit, 0, $submitButtonStyle);
+    }	
 }
 ?>
