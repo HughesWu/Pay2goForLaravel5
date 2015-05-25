@@ -175,5 +175,27 @@ class Pay2goPaymentClass {
     public function form_url ($isTest = TRUE) {
         return ($isTest == TRUE) ? "https://capi.pay2go.com/MPG/mpg_gateway" : "https://api.pay2go.com/MPG/mpg_gateway";
     }
+	
+    /**
+     * MPG 測試程式
+     */
+    public function mpg_unit_test () {
+	
+		$result = array (
+			"MerchantID"		=>	"3502275",					//	商店代號
+			"RespondType"		=>	"JSON",						//	回傳格式
+			"TimeStamp"			=>	time(),						//	時間戳記
+			"Version"			=>	"1.1",						//	串接版本
+			"MerchantOrderNo"	=>	date("Ymdhis", time()),		//	商店訂單編號
+			"Amt"				=>	rand(30 , 50),				//	訂單金額
+			"ItemDesc"			=>	"MPG Unit Test",			//	商品資訊
+			"LoginType"			=>	"0",						//	是否要登入智付寶會員
+		);
+	
+		//	檢查碼
+		$result["CheckValue"]	=	$this->get_check_value($result, "ZrpKy4IX77doTzOE4fWfKV2leWWWDs8D", "UxnsC5qJdE86eXLi");
+			
+		return $this->create_form($result);
+	}	
 }
 ?>
