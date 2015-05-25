@@ -179,7 +179,9 @@ class Pay2goPaymentClass {
     /**
      * MPG 測試程式
      */
-    public function mpg_unit_test () {
+    public function mpg_unit_test() {
+	
+		die("inin");
 	
 		$result = array (
 			"MerchantID"		=>	"3502275",					//	商店代號
