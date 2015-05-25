@@ -10,10 +10,5 @@
             "name": "Hughes, Wu",
             "email": "hughes.wu@pay2go.com"
         }
-    ],
-    "autoload": {
-        "psr-0": {
-            "Pay2go\\Pay2goPaymentClass\\": "src/"
-        }
-    }	
+    ]
 }
