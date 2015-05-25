@@ -180,13 +180,16 @@ class Pay2goPaymentClass {
     /**
      * MPG 測試程式
      * 
-     * @param boolean   $autoSubmit         是否自動送出
+     * @param boolean   $autoSubmit     是否自動送出
+     * @param string    $merID          商店代號
+     * @param string    $merKey         商店 Key
+     * @param string    $merIV          商店 IV
      * @return type
      */
-    public function mpg_unit_test($autoSubmit = TRUE) {
+    public function mpg_unit_test($autoSubmit = TRUE, $merID, $merKey, $merIV) {
 	
         $result = array (
-            "MerchantID"        =>  "3502275",              //	商店代號
+            "MerchantID"        =>  $merID,                 //	商店代號
             "RespondType"	=>  "JSON",                 //  回傳格式
             "TimeStamp"		=>  time(),                 //	時間戳記
             "Version"		=>  "1.1",                  //	串接版本
@@ -197,7 +200,7 @@ class Pay2goPaymentClass {
         );
 
         //  檢查碼
-        $result["CheckValue"]	=   $this->get_check_value($result, "ZrpKy4IX77doTzOE4fWfKV2leWWWDs8D", "UxnsC5qJdE86eXLi");       
+        $result["CheckValue"]	=   $this->get_check_value($result, $merKey, $merIV);       
         
         //  送出按鈕
         $submitButtonStyle      =   "<input id='Pay2goMgr' name='submit' type='submit' value='送出' />";
